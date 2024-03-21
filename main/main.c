@@ -63,18 +63,29 @@ void oled_task(void *p) {
 
     printf("Inicializando btn and LEDs\n");
 
-    char cnt = 0;
     float distance;
     char str[50];
     while(true){
         if (xSemaphoreTake(xSemaphoreTrigger, 0) == pdTRUE) {
             if (xQueueReceive(xQueueDistance, &distance,  0)) {
                 sprintf(str, "%.1f cm", distance);
-                gfx_clear_buffer(&disp);
-                gfx_draw_string(&disp, 0, 0, 1, "Distancia: ");
-                gfx_draw_string(&disp, 0, 10, 1, str);
-                gfx_draw_line(&disp, 0, 27, distance, 27);
-                gfx_show(&disp);
+                if (distance <= 220)
+                {
+                    gfx_clear_buffer(&disp);
+                    gfx_draw_string(&disp, 0, 0, 1, "Distancia: ");
+                    gfx_draw_string(&disp, 0, 10, 1, str);
+                    gfx_draw_line(&disp, 0, 27, distance, 27);
+                    gfx_show(&disp);
+                }
+                else
+                {
+                    gfx_clear_buffer(&disp);
+                    gfx_draw_string(&disp, 0, 0, 1, "Distancia: ");
+                    gfx_draw_string(&disp, 0, 10, 1, "Muito Grande");
+                    gfx_draw_line(&disp, 0, 27, 10, 27);
+                    gfx_show(&disp);
+                }
+                
             } else {
                 gfx_clear_buffer(&disp);
                 gfx_draw_string(&disp, 0, 0, 1, "Distancia: ");
